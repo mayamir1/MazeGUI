@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+
+<?import javafx.scene.canvas.Canvas?>
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.demo.View.MyViewController"
+      spacing="10" alignment="CENTER" style="-fx-padding: 20;">
+    <Canvas fx:id="mazeCanvas" width="400" height="400"
+            focusTraversable="true"/>
+    <TextField fx:id="nameField" promptText="Enter your name"/>
+    <TextField fx:id="rowsField" promptText="Rows"/>
+    <TextField fx:id="colsField" promptText="Columns"/>
+    <Button text="Generate Maze" onAction="#onGenerateMazeClicked"/>
+    <Label fx:id="greetingLabel"/>
+
+</VBox>
