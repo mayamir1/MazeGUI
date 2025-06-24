@@ -9,22 +9,34 @@ import javafx.stage.Stage;
 import java.net.URL;
 
 public class HelloApplication extends Application {
+
     @Override
     public void start(Stage stage) throws Exception {
-        // טוען את קובץ ה־FXML
-        URL fxmlLocation = getClass().getResource("/View/hello-view.fxml");
 
-        // בדיקה חשובה: האם הקובץ באמת נמצא
+        /* 1️⃣  נתיב-FXML חדש  */
+        URL fxmlLocation = getClass().getResource("/View/main-menu.fxml");
+
         if (fxmlLocation == null) {
-            System.err.println("❌ FXML file not found at /View/hello-view.fxml");
-            System.exit(1); // מפסיק את התוכנית אם הקובץ לא קיים
+            System.err.println("❌ FXML file not found at /View/main-menu.fxml");
+            System.exit(1);
         } else {
             System.out.println("✅ Loaded FXML from: " + fxmlLocation);
         }
 
-        // טוען את הממשק
         Parent root = FXMLLoader.load(fxmlLocation);
-        Scene scene = new Scene(root, 600, 400);
+        Scene scene = new Scene(root, 800, 600);          // 2️⃣ גודל תואם רקע
+
+        /* CSS – נשאר אותו נתיב */
+        URL cssLocation = getClass().getResource("/View/style.css");
+        System.out.println("CSS => " + cssLocation);
+
+        if (cssLocation != null) {
+            scene.getStylesheets().add(cssLocation.toExternalForm());
+            System.out.println("✅ Loaded CSS from: " + cssLocation);
+        } else {
+            System.err.println("⚠️ style.css not found in /View/");
+        }
+
         stage.setTitle("Maze App");
         stage.setScene(scene);
         stage.show();

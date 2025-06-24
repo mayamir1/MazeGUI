@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.example.demo.View.PropertiesController"
+            prefWidth="300" prefHeight="340" styleClass="dialog-root">
+
+    <center>
+        <TableView fx:id="table" editable="false">
+            <columns>
+                <TableColumn fx:id="keyCol"   text="Configuration" prefWidth="140"/>
+                <TableColumn fx:id="valueCol" text="Set Value"    prefWidth="140"/>
+            </columns>
+        </TableView>
+    </center>
+
+    <bottom>
+        <Button text="Close" maxWidth="Infinity"
+                onAction="#onClose" styleClass="dialog-button"/>
+    </bottom>
+</BorderPane>

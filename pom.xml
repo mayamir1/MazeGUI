@@ -53,6 +53,7 @@
                 <directory>src/main/resources</directory>
                 <includes>
                     <include>**/*.fxml</include>
+                    <include>**/*.css</include>
                     <include>**/*.png</include>
                 </includes>
             </resource>
@@ -73,6 +74,15 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>24</source>
+                    <target>24</target>
+                    <compilerArgs>--enable-preview</compilerArgs>
+                </configuration>
             </plugin>
         </plugins>
     </build>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.control.*?>
+
+<StackPane fx:id="menuRoot"
+           fx:controller="com.example.demo.View.MainMenuController"
+           xmlns:fx="http://javafx.com/fxml"
+           stylesheets="@style.css"
+           styleClass="menu-root">
+
+    <!-- תמונת‑הרקע -->
+    <ImageView fitWidth="800" fitHeight="600" preserveRatio="false">
+        <image>
+            <Image url="@img/menu_bg.png"/>
+        </image>
+    </ImageView>
+
+    <!-- כותרת + כפתורים -->
+    <!-- כותרת מעט למעלה (padding 30) + מרווח 40px לפני הכפתורים -->
+    <VBox alignment="CENTER" spacing="20" style="-fx-padding: 10 0 0 0;">
+        <Label text="WAR AGAINST IRAN" style="-fx-text-fill:#FFF8E1;" styleClass="menu-title"/>
+        <Region prefHeight="60" />
+
+        <!-- כפתורים קטנים יותר -->
+        <Button text="New Game" prefWidth="160" style="-fx-font-size:16px;" styleClass="menu-button red"  onAction="#onNewGame"/>
+        <Button text="Options" prefWidth="160" style="-fx-font-size:16px;" styleClass="menu-button blue" onAction="#onProperties"/>
+        <Button text="Help"     prefWidth="160" style="-fx-font-size:16px;" styleClass="menu-button blue" onAction="#onHelp"/>
+        <Button text="About"    prefWidth="160" style="-fx-font-size:16px;" styleClass="menu-button blue" onAction="#onAbout"/>
+        <Button text="Exit"     prefWidth="160" style="-fx-font-size:16px;" styleClass="menu-button blue" onAction="#onExit"/>
+    </VBox>
+</StackPane>

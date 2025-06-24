@@ -1,19 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.*?>
-
 <?import javafx.scene.canvas.Canvas?>
-<VBox xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.example.demo.View.MyViewController"
-      spacing="10" alignment="CENTER" style="-fx-padding: 20;">
-    <Canvas fx:id="mazeCanvas" width="400" height="400"
-            focusTraversable="true"/>
-    <TextField fx:id="nameField" promptText="Enter your name"/>
-    <TextField fx:id="rowsField" promptText="Rows"/>
-    <TextField fx:id="colsField" promptText="Columns"/>
-    <Button text="Generate Maze" onAction="#onGenerateMazeClicked"/>
-    <Label fx:id="greetingLabel"/>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-</VBox>
+<!-- Gameplay screen (maze view) -->
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.example.demo.View.MyViewController"
+            stylesheets="@style.css"
+            styleClass="game-root">
+
+    <!-- ───── Top Bar ───── -->
+    <top>
+        <MenuBar fx:id="menuBar" styleClass="top-bar">
+            <!-- File drop‑down -->
+            <Menu text="File">
+                <MenuItem text="New"  onAction="#onNewMaze"/>
+                <MenuItem text="Save" onAction="#onSaveMaze"/>
+            </Menu>
+
+            <!-- Stand‑alone return option -->
+            <Menu text="Back to Main Menu">
+                <MenuItem text="Return" onAction="#onBackToMenu"/>
+            </Menu>
+        </MenuBar>
+    </top>
+
+    <!-- ───── Centre: maze & controls (background applied via CSS) ───── -->
+    <center>
+        <StackPane alignment="CENTER">
+            <!-- Foreground controls -->
+            <VBox spacing="10" alignment="CENTER">
+                <Canvas fx:id="mazeCanvas" width="400" height="400" focusTraversable="true"/>
+
+                <TextField fx:id="nameField" promptText="Enter your name"
+                           maxWidth="240" styleClass="text-field"/>
+                <TextField fx:id="rowsField" promptText="Rows"
+                           maxWidth="240" styleClass="text-field"/>
+                <TextField fx:id="colsField" promptText="Columns"
+                           maxWidth="240" styleClass="text-field"/>
+
+                <Button text="Generate Maze" onAction="#onGenerateMazeClicked"
+                        maxWidth="200" styleClass="button"/>
+                <Label  fx:id="greetingLabel" styleClass="label"/>
+            </VBox>
+        </StackPane>
+    </center>
+
+</BorderPane>
