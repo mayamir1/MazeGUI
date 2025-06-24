@@ -1,9 +1,9 @@
 package com.example.demo.View;
 
+import algorithms.mazeGenerators.Position;
 import com.example.demo.ViewModel.MyViewModel;
 import algorithms.mazeGenerators.Maze;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -13,13 +13,17 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.paint.Color;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.*;
+import java.util.List;
 import java.util.Objects;
-import java.util.Properties;
 
 public class MyViewController {
 
@@ -29,12 +33,20 @@ public class MyViewController {
     private Image playerImage;
     private Image wallImage;
     private Image goalImage;
+    private boolean showSolution = false;
+
 
     @FXML private Canvas mazeCanvas;
     @FXML private TextField nameField;
     @FXML private TextField rowsField;
     @FXML private TextField colsField;
     @FXML private Label greetingLabel;
+    @FXML private Button solveBtn;
+    @FXML private BorderPane root;
+
+
+    private MediaPlayer bgPlayer;
+    private boolean victoryShown = false;   // דגל כדי שלא נפעיל פעמיים
 
 
     @FXML
@@ -51,14 +63,26 @@ public class MyViewController {
         mazeCanvas.setFocusTraversable(true);
         mazeCanvas.setOnMouseClicked(e -> mazeCanvas.requestFocus());
         mazeCanvas.setOnKeyPressed(this::handleMove);
+        startBackgroundMusic();
+
     }
 
     @FXML
     private void onGenerateMazeClicked() {
         viewModel.generateMaze();
+        solveBtn.setDisable(false);
+        showSolution = false;
         drawMaze();
         mazeCanvas.requestFocus();
     }
+
+    @FXML
+    public void onSolveMazeClicked() {
+        viewModel.solveMaze();          // מחשב פתרון במודל
+        showSolution = true;            // עכשיו מותר לצייר
+        drawMaze();
+    }
+
 
     private void handleMove(KeyEvent event) {
         switch (event.getCode()) {
@@ -73,7 +97,7 @@ public class MyViewController {
         }
         drawMaze();
         if (viewModel.isAtGoal()) {
-            new Alert(Alert.AlertType.INFORMATION, "🎉 You reached the goal!").showAndWait();
+            new Alert(Alert.AlertType.INFORMATION, "You reached the goal!").showAndWait();
             mazeCanvas.setOnKeyPressed(null);
         }
         event.consume();
@@ -83,36 +107,74 @@ public class MyViewController {
         Maze maze = viewModel.getMaze();
         if (maze == null) return;
 
-        int[][] mat = maze.getMat();
-        double cellW = mazeCanvas.getWidth()  / mat[0].length;
-        double cellH = mazeCanvas.getHeight() / mat.length;
-
+        int[][] grid = maze.getMat();
         GraphicsContext gc = mazeCanvas.getGraphicsContext2D();
+
+        // ========= החישוב צריך להיות לפני כל שימוש =========
+        double cellWidth  = mazeCanvas.getWidth()  / grid[0].length;
+        double cellHeight = mazeCanvas.getHeight() / grid.length;
+        // =====================================================
+
         gc.clearRect(0, 0, mazeCanvas.getWidth(), mazeCanvas.getHeight());
 
-        /* ---  צובע את שבילי המבוך  --- */
-        gc.setFill(Color.web("#ff9800"));          // ← כאן מחליפים מ-WHITE
-        for (int r = 0; r < mat.length; r++)
-            for (int c = 0; c < mat[0].length; c++)
-                if (mat[r][c] == 0)                // תא שביל
-                    gc.fillRect(c*cellW, r*cellH, cellW, cellH);
+        /* --- ציור קירות --- */
+        for (int r = 0; r < grid.length; r++) {
+            for (int c = 0; c < grid[0].length; c++) {
+                if (grid[r][c] == 1) {
+                    gc.drawImage(wallImage,
+                            c * cellWidth, r * cellHeight,
+                            cellWidth, cellHeight);
+                }
+            }
+        }
 
-        /* --- ציור קירות (כמו שהיה) --- */
-        for (int r = 0; r < mat.length; r++)
-            for (int c = 0; c < mat[0].length; c++)
-                if (mat[r][c] == 1)
-                    gc.drawImage(wallImage, c*cellW, r*cellH, cellW, cellH);
+        /* --- ציור פתרון (אם ביקשו) --- */
+        if (showSolution) {
+            List<Position> path = viewModel.getSolutionPath();
+            if (path != null) {
+                gc.setFill(javafx.scene.paint.Color.rgb(255, 0, 0, 0.5));
+                for (Position p : path) {
+                    gc.fillRect(p.getColumnIndex() * cellWidth,
+                            p.getRowIndex()    * cellHeight,
+                            cellWidth, cellHeight);
+                }
+            }
+        }
 
-        /* --- ציור מטרה ושחקן --- */
-        int goalR = maze.getGoalPosition().getRowIndex();
-        int goalC = maze.getGoalPosition().getColumnIndex();
-        gc.drawImage(goalImage, goalC*cellW, goalR*cellH, cellW, cellH);
-
+        /* --- ציור שחקן --- */
+        int pRow = viewModel.getPlayerRow();
+        int pCol = viewModel.getPlayerCol();
         gc.drawImage(playerImage,
-                viewModel.getPlayerCol()*cellW,
-                viewModel.getPlayerRow()*cellH,
-                cellW, cellH);
+                pCol * cellWidth, pRow * cellHeight,
+                cellWidth, cellHeight);
+
+        int gRow = maze.getGoalPosition().getRowIndex();
+        int gCol = maze.getGoalPosition().getColumnIndex();
+        gc.drawImage(goalImage, gCol*cellWidth, gRow*cellHeight,
+                cellWidth, cellHeight);
+
+        if (!victoryShown &&
+                viewModel.getPlayerRow() == viewModel.getGoalRow() &&
+                viewModel.getPlayerCol() == viewModel.getGoalCol()) {
+
+            victoryShown = true;
+            playVictory();          // הפעלת מוזיקה + וידאו
+        }
     }
+    @FXML
+    private void onJarMazeClicked() {
+        algorithms.mazeGenerators.IMazeGenerator jarGen =
+                new algorithms.mazeGenerators.SimpleMazeGenerator(); // מה־JAR
+
+        algorithms.mazeGenerators.Maze mazeFromJar = jarGen.generate(10, 10);
+
+        viewModel.setMaze(mazeFromJar);   // תוודאי שיש את המתודה הזו
+        viewModel.solveMaze();
+
+        showSolution = true;
+        drawMaze();
+    }
+
 
 
     @FXML
@@ -230,6 +292,50 @@ public class MyViewController {
                 Objects.requireNonNull(getClass().getResource("/View/style.css")).toExternalForm());
         stage.setScene(scene);
     }
+
+    private void startBackgroundMusic() {
+        Media bg = new Media(getClass().getResource("/View/sounds/bg.mp3").toExternalForm());
+        bgPlayer = new MediaPlayer(bg);
+        bgPlayer.setCycleCount(MediaPlayer.INDEFINITE); // לולאה
+        bgPlayer.setVolume(0.6);
+        bgPlayer.play();               // לא צריך MediaView אם לא מציגים וידאו
+    }
+
+    private void playVictory() {
+
+        // עוצר מוזיקה קיימת
+        if (bgPlayer != null) bgPlayer.stop();
+
+        // קובץ ה-MP4 (עם סאונד) – יפעל פעם אחת
+        Media media = new Media(getClass().getResource("/View/sounds/victory.mp4").toExternalForm());
+        MediaPlayer mediaPlayer = new MediaPlayer(media);
+        MediaView mediaView = new MediaView(mediaPlayer);
+
+        mediaView.setPreserveRatio(true);
+        mediaView.setFitWidth(root.getWidth());
+        mediaView.setFitHeight(root.getHeight());
+
+        Label victoryLabel = new Label("🎉 Mission Complete!");
+        victoryLabel.setStyle("-fx-font-size: 48px; -fx-text-fill: yellow; -fx-font-weight: bold;");
+        victoryLabel.setTranslateY(-50); // מעלה קצת את הכיתוב
+
+        StackPane overlay = new StackPane(mediaView, victoryLabel);
+        overlay.setStyle("-fx-background-color: black;"); // רקע אחיד
+        overlay.setPrefSize(root.getWidth(), root.getHeight());
+
+        root.setCenter(overlay);
+
+        mediaPlayer.setOnEndOfMedia(() -> root.setCenter(mazeCanvas));
+        mediaPlayer.play();
+    }
+
+    private void checkVictory(int playerRow, int playerCol, int goalRow, int goalCol) {
+        if (playerRow == goalRow && playerCol == goalCol) {
+            playVictory();
+            showSolution = false; // or any logic
+        }
+    }
+
 
 
 }

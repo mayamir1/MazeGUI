@@ -1,11 +1,14 @@
 package com.example.demo.ViewModel;
 
 import algorithms.mazeGenerators.Maze;
+import algorithms.mazeGenerators.Position;
 import com.example.demo.model.MyModel;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
+
+import java.util.List;
 
 public class MyViewModel {
     private final StringProperty name = new SimpleStringProperty();
@@ -13,6 +16,7 @@ public class MyViewModel {
     private final MyModel model = new MyModel();
     private final StringProperty rowsProperty = new SimpleStringProperty();
     private final StringProperty colsProperty = new SimpleStringProperty();
+    private List<Position> solutionPath = null;
 
     private Maze maze;
 
@@ -110,5 +114,20 @@ public class MyViewModel {
         return playerRow == maze.getGoalPosition().getRowIndex() &&
                 playerCol == maze.getGoalPosition().getColumnIndex();
     }
+
+    public void solveMaze() {
+        solutionPath = model.solveMaze();     // קריאה למודל
+    }
+    public List<Position> getSolutionPath() { return solutionPath; }
+
+    public int getGoalRow() { return maze.getGoalPosition().getRowIndex(); }
+    public int getGoalCol() { return maze.getGoalPosition().getColumnIndex(); }
+
+    public void setMaze(Maze maze) {
+        this.maze = maze;
+        this.playerRow = maze.getStartPosition().getRowIndex();
+        this.playerCol = maze.getStartPosition().getColumnIndex();
+    }
+
 
 }

@@ -60,6 +60,17 @@
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.8), 6, 0.5, 0, 2);
 }
 
+.menu-bar, .menu-button, .menu-item {
+    -fx-background-color: #0288d1;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.menu-item:hover {
+    -fx-background-color: #01579b;
+    -fx-text-fill: white;
+}
+
 .menu-button {
     -fx-font-size: 22px;
     -fx-font-weight: bold;

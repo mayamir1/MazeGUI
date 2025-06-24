@@ -4,7 +4,8 @@
 <?import javafx.scene.layout.*?>
 
 <!-- Gameplay screen (maze view) -->
-<BorderPane xmlns="http://javafx.com/javafx"
+<BorderPane  fx:id="root"
+        xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.example.demo.View.MyViewController"
             stylesheets="@style.css"
@@ -23,6 +24,10 @@
             <Menu text="Back to Main Menu">
                 <MenuItem text="Return" onAction="#onBackToMenu"/>
             </Menu>
+            <Menu text="Show Solution">
+                <MenuItem text="Solution" onAction="#onSolveMazeClicked"/>
+            </Menu>
+
         </MenuBar>
     </top>
 
@@ -43,6 +48,24 @@
                 <Button text="Generate Maze" onAction="#onGenerateMazeClicked"
                         maxWidth="200" styleClass="button"/>
                 <Label  fx:id="greetingLabel" styleClass="label"/>
+
+                <Button fx:id="generateBtn"
+                        text="Generate Maze"
+                        onAction="#onGenerateMazeClicked"/>
+
+                <Button fx:id="solveBtn"
+                        text="Show Solution"
+                        onAction="#onSolveMazeClicked"
+                        disable="true"
+                        styleClass="menu-button"/>
+
+                <Button fx:id="jarMazeBtn"
+                        text="Generate and Solve Maze (JAR)"
+                        onAction="#onJarMazeClicked"
+                        maxWidth="200" styleClass="button"/>
+
+
+
             </VBox>
         </StackPane>
     </center>
