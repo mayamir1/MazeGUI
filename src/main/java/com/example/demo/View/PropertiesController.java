@@ -13,7 +13,7 @@ public class PropertiesController {
     @FXML private TableColumn<Map.Entry<String,String>,String> keyCol;
     @FXML private TableColumn<Map.Entry<String,String>,String> valueCol;
 
-    // מקבלים Map עם ההגדרות – אפשר לשלוח מה-MenuController
+
     public void init(Map<String,String> props) {
         keyCol.setCellValueFactory(c -> new ReadOnlyStringWrapper(c.getValue().getKey()));
         valueCol.setCellValueFactory(c -> new ReadOnlyStringWrapper(c.getValue().getValue()));

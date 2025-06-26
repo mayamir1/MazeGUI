@@ -8,31 +8,32 @@ import algorithms.search.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MyModel {
+public class MyModel implements IModel {
     private Maze maze;
     private int rows;
     private int cols;
 
+    @Override
     public void generateMaze(int rows, int cols) {
         MyMazeGenerator generator = new MyMazeGenerator();
         maze = generator.generate(rows, cols);
         System.out.println("Maze generated:");
-        maze.print(); // הדפסה לקונסול — בשלב מאוחר נחליף בהצגה ב־UI
+        maze.print();
     }
-
+    @Override
     public Maze getMaze() {
         return maze;
     }
-
+    @Override
     public void setDimensions(int rows, int cols) {
         this.rows = rows;
         this.cols = cols;
     }
-
+    @Override
     public int getRows() {
         return rows;
     }
-
+    @Override
     public int getCols() {
         return cols;
     }

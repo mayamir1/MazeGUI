@@ -5,37 +5,44 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.effect.GaussianBlur;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
 
 public class MainMenuController {
 
-    /* ─────────────  שדה משורש ה-FXML (fx:id="menuRoot") ───────────── */
+
     @FXML private StackPane menuRoot;
 
-    /* ─────────────  New Game – מעביר למסך המֵייז  ───────────── */
+
     @FXML
-    private void onNewGame() throws Exception {
+
+
+    private void onNewGame() throws IOException {
         Stage stage = (Stage) menuRoot.getScene().getWindow();
 
         Parent root = FXMLLoader.load(
-                Objects.requireNonNull(getClass().getResource("/View/hello-view.fxml")));
-        Scene scene = new Scene(root, 800, 600);
-        scene.getStylesheets().add(
-                Objects.requireNonNull(getClass().getResource("/View/style.css")).toExternalForm());
+                Objects.requireNonNull(getClass().getResource("hello-view.fxml")));
 
-        stage.setScene(scene);
+        Scene scene = new Scene(root);
+        scene.getStylesheets().add(
+                Objects.requireNonNull(getClass().getResource("style.css")).toExternalForm());
+
+        stage.setScene(scene);      // ← חייבים את זה
+        stage.setMaximized(true);   // אופציונלי
     }
 
-    /* ─────────────  Properties – חלון טבלה קטן  ───────────── */
+
     @FXML
     private void onProperties() throws Exception {
 
-        // דוגמת ערכים (אפשר לקרוא מקובץ properties אמיתי בעתיד)
+
         Map<String,String> cfg = Map.of(
                 "threadPoolSize",    "5",
                 "mazeGeneratingAlg", "MyMazeGenerator",
@@ -43,10 +50,10 @@ public class MainMenuController {
         );
 
         FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("/View/properties-dialog.fxml"));
+                getClass().getResource("/com/example/demo/View/properties-dialog.fxml"));
         Parent root = loader.load();
 
-        // מעביר Map לבקר החלון
+
         PropertiesController pc = loader.getController();
         pc.init(cfg);
 
@@ -59,7 +66,7 @@ public class MainMenuController {
         dlg.showAndWait();
     }
 
-    /* ─────────────  Help  ───────────── */
+
     @FXML
     private void onHelp() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -82,7 +89,7 @@ public class MainMenuController {
         alert.showAndWait();
     }
 
-    /* ----------  About  ---------- */
+
     @FXML
     private void onAbout() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -108,9 +115,16 @@ public class MainMenuController {
     }
 
 
-    /* ─────────────  Exit  ───────────── */
+
     @FXML
     private void onExit() {
         System.exit(0);
     }
+
+
+
+
+
+
 }
+

@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<!-- Gameplay screen (maze view) -->
+
 <BorderPane  fx:id="root"
         xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
@@ -11,16 +11,16 @@
             stylesheets="@style.css"
             styleClass="game-root">
 
-    <!-- ───── Top Bar ───── -->
+
     <top>
         <MenuBar fx:id="menuBar" styleClass="top-bar">
-            <!-- File drop‑down -->
+
             <Menu text="File">
                 <MenuItem text="New"  onAction="#onNewMaze"/>
                 <MenuItem text="Save" onAction="#onSaveMaze"/>
             </Menu>
 
-            <!-- Stand‑alone return option -->
+
             <Menu text="Back to Main Menu">
                 <MenuItem text="Return" onAction="#onBackToMenu"/>
             </Menu>
@@ -31,10 +31,10 @@
         </MenuBar>
     </top>
 
-    <!-- ───── Centre: maze & controls (background applied via CSS) ───── -->
+
     <center>
         <StackPane alignment="CENTER">
-            <!-- Foreground controls -->
+
             <VBox spacing="10" alignment="CENTER">
                 <Canvas fx:id="mazeCanvas" width="400" height="400" focusTraversable="true"/>
 
@@ -49,20 +49,20 @@
                         maxWidth="200" styleClass="button"/>
                 <Label  fx:id="greetingLabel" styleClass="label"/>
 
-                <Button fx:id="generateBtn"
-                        text="Generate Maze"
-                        onAction="#onGenerateMazeClicked"/>
+<!--                <Button fx:id="generateBtn"-->
+<!--                        text="Generate Maze"-->
+<!--                        onAction="#onGenerateMazeClicked"/>-->
 
-                <Button fx:id="solveBtn"
-                        text="Show Solution"
-                        onAction="#onSolveMazeClicked"
-                        disable="true"
-                        styleClass="menu-button"/>
+<!--                <Button fx:id="solveBtn"-->
+<!--                        text="Show Solution"-->
+<!--                        onAction="#onSolveMazeClicked"-->
+<!--                        disable="true"-->
+<!--                        styleClass="menu-button"/>-->
 
-                <Button fx:id="jarMazeBtn"
-                        text="Generate and Solve Maze (JAR)"
-                        onAction="#onJarMazeClicked"
-                        maxWidth="200" styleClass="button"/>
+<!--                <Button fx:id="jarMazeBtn"-->
+<!--                        text="Generate and Solve Maze (JAR)"-->
+<!--                        onAction="#onJarMazeClicked"-->
+<!--                        maxWidth="200" styleClass="button"/>-->
 
 
 

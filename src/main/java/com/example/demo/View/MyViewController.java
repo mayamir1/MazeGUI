@@ -25,7 +25,7 @@ import java.io.*;
 import java.util.List;
 import java.util.Objects;
 
-public class MyViewController {
+public class MyViewController implements IView{
 
     private final MyViewModel viewModel = new MyViewModel();
     public MenuBar menuBar;
@@ -46,10 +46,11 @@ public class MyViewController {
 
 
     private MediaPlayer bgPlayer;
-    private boolean victoryShown = false;   // דגל כדי שלא נפעיל פעמיים
+    private boolean victoryShown = false;
 
 
     @FXML
+    @Override
     public void initialize() {
         playerImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/player.png")));
         wallImage   = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/wall.png")));
@@ -78,13 +79,13 @@ public class MyViewController {
 
     @FXML
     public void onSolveMazeClicked() {
-        viewModel.solveMaze();          // מחשב פתרון במודל
-        showSolution = true;            // עכשיו מותר לצייר
+        viewModel.solveMaze();
+        showSolution = true;
         drawMaze();
     }
 
-
-    private void handleMove(KeyEvent event) {
+    @Override
+    public void handleMove(KeyEvent event) {
         switch (event.getCode()) {
             case UP    -> viewModel.moveUp();
             case DOWN  -> viewModel.moveDown();
@@ -95,6 +96,7 @@ public class MyViewController {
                 return;
             }
         }
+
         drawMaze();
         if (viewModel.isAtGoal()) {
             new Alert(Alert.AlertType.INFORMATION, "You reached the goal!").showAndWait();
@@ -102,22 +104,22 @@ public class MyViewController {
         }
         event.consume();
     }
-
-    private void drawMaze() {
+    @Override
+    public void drawMaze() {
         Maze maze = viewModel.getMaze();
         if (maze == null) return;
 
         int[][] grid = maze.getMat();
         GraphicsContext gc = mazeCanvas.getGraphicsContext2D();
 
-        // ========= החישוב צריך להיות לפני כל שימוש =========
+
         double cellWidth  = mazeCanvas.getWidth()  / grid[0].length;
         double cellHeight = mazeCanvas.getHeight() / grid.length;
-        // =====================================================
+
 
         gc.clearRect(0, 0, mazeCanvas.getWidth(), mazeCanvas.getHeight());
 
-        /* --- ציור קירות --- */
+
         for (int r = 0; r < grid.length; r++) {
             for (int c = 0; c < grid[0].length; c++) {
                 if (grid[r][c] == 1) {
@@ -128,7 +130,7 @@ public class MyViewController {
             }
         }
 
-        /* --- ציור פתרון (אם ביקשו) --- */
+
         if (showSolution) {
             List<Position> path = viewModel.getSolutionPath();
             if (path != null) {
@@ -158,7 +160,7 @@ public class MyViewController {
                 viewModel.getPlayerCol() == viewModel.getGoalCol()) {
 
             victoryShown = true;
-            playVictory();          // הפעלת מוזיקה + וידאו
+            playVictory();
         }
     }
     @FXML
@@ -168,7 +170,7 @@ public class MyViewController {
 
         algorithms.mazeGenerators.Maze mazeFromJar = jarGen.generate(10, 10);
 
-        viewModel.setMaze(mazeFromJar);   // תוודאי שיש את המתודה הזו
+        viewModel.setMaze(mazeFromJar);
         viewModel.solveMaze();
 
         showSolution = true;
@@ -205,7 +207,7 @@ public class MyViewController {
                 new FileOutputStream(f))) {
 
             oos.writeObject(viewModel.getMaze());
-            // --------------- הודעת הצלחה ---------------
+
             Alert ok = new Alert(Alert.AlertType.INFORMATION);
             ok.setTitle("Maze saved");
             ok.setHeaderText(null);
@@ -221,7 +223,7 @@ public class MyViewController {
     }
 
     /* ---------- Helpers ---------- */
-// showSaveDialog נשאר – משתמשים בו בכפתור Save בלבד
+
     private File showSaveDialog(String title,
                                 String extDesc, String ext) {
 
@@ -239,74 +241,35 @@ public class MyViewController {
     }
 
 
-    @FXML
-    private void onExit(ActionEvent event) {
-        System.exit(0);
-    }
-
-    @FXML
-    private void onHelp(ActionEvent event) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Help");
-        alert.setHeaderText("Game Instructions");
-        alert.setContentText(
-                "\uD83D\uDDFA Mission Overview:\n" +
-                        "You are a special forces soldier navigating a maze to locate and destroy a nuclear reactor.\n\n" +
-                        "\uD83C\uDFAE Controls:\n" +
-                        "- Use the arrow keys to move (↑ ↓ ← →).\n" +
-                        "- Avoid dead ends and traps.\n\n" +
-                        "\uD83C\uDFAF Objective:\n" +
-                        "Reach the hidden goal marked inside the maze. It represents the entrance to the enemy facility.\n" +
-                        "When reached, the mission is complete.\n\n" +
-                        "\uD83D\uDCA1 Tips:\n" +
-                        "- Plan your path strategically.\n" +
-                        "- Use 'New', 'Save', and 'Load' from the menu to manage your progress."
-        );
-        alert.showAndWait();
-    }
-
-    @FXML
-    private void onAbout(ActionEvent event) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("About");
-        alert.setHeaderText("Maze Mission: Operation Final Strike");
-        alert.setContentText(
-                "In this maze game, you play as an elite commando tasked with infiltrating a hostile area.\n" +
-                        "Your objective: navigate the maze and destroy a nuclear reactor deep inside Iran.\n" +
-                        "The goal tile represents the hidden entrance to the facility.\n" +
-                        "Plan your path, avoid traps, and reach the destination to complete your mission.\n\n" +
-                        "\uD83D\uDCD6 Project Info:\n" +
-                        "This project was developed as part of a university GUI course.\n" +
-                        "Developer: [Your Name]\nYear: 2025"
-        );
-        alert.showAndWait();
-    }
 
     @FXML
     private void onBackToMenu() throws IOException {
         Stage stage = (Stage) menuBar.getScene().getWindow();
         Parent root = FXMLLoader.load(
-                Objects.requireNonNull(getClass().getResource("/View/main-menu.fxml")));
-        Scene scene = new Scene(root, 800, 600);
+                Objects.requireNonNull(getClass().getResource("main-menu.fxml")));
+        Scene scene = new Scene(root);                     // ← בלי 800×600
         scene.getStylesheets().add(
-                Objects.requireNonNull(getClass().getResource("/View/style.css")).toExternalForm());
+                Objects.requireNonNull(getClass().getResource("style.css"))
+                        .toExternalForm());
         stage.setScene(scene);
+
+
     }
 
     private void startBackgroundMusic() {
         Media bg = new Media(getClass().getResource("/View/sounds/bg.mp3").toExternalForm());
         bgPlayer = new MediaPlayer(bg);
-        bgPlayer.setCycleCount(MediaPlayer.INDEFINITE); // לולאה
+        bgPlayer.setCycleCount(MediaPlayer.INDEFINITE);
         bgPlayer.setVolume(0.6);
-        bgPlayer.play();               // לא צריך MediaView אם לא מציגים וידאו
+        bgPlayer.play();
     }
+    @Override
+    public void playVictory() {
 
-    private void playVictory() {
 
-        // עוצר מוזיקה קיימת
         if (bgPlayer != null) bgPlayer.stop();
 
-        // קובץ ה-MP4 (עם סאונד) – יפעל פעם אחת
+
         Media media = new Media(getClass().getResource("/View/sounds/victory.mp4").toExternalForm());
         MediaPlayer mediaPlayer = new MediaPlayer(media);
         MediaView mediaView = new MediaView(mediaPlayer);
@@ -317,10 +280,10 @@ public class MyViewController {
 
         Label victoryLabel = new Label("🎉 Mission Complete!");
         victoryLabel.setStyle("-fx-font-size: 48px; -fx-text-fill: yellow; -fx-font-weight: bold;");
-        victoryLabel.setTranslateY(-50); // מעלה קצת את הכיתוב
+        victoryLabel.setTranslateY(-50);
 
         StackPane overlay = new StackPane(mediaView, victoryLabel);
-        overlay.setStyle("-fx-background-color: black;"); // רקע אחיד
+        overlay.setStyle("-fx-background-color: black;");
         overlay.setPrefSize(root.getWidth(), root.getHeight());
 
         root.setCenter(overlay);
